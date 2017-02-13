@@ -1,31 +1,24 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   singmalloc.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jguyet <jguyet@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2016/08/20 17:07:37 by jguyet            #+#    #+#             */
-/*   Updated: 2016/08/20 17:09:50 by jguyet           ###   ########.fr       */
+/*   Created: 2017/02/13 16:16:33 by jguyet            #+#    #+#             */
+/*   Updated: 2017/02/13 16:25:12 by jguyet           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <mallocStandard.h>
+#include <mallocstandard.h>
 
-void			free(void *ptr)
+t_smalloc*	singmalloc()
 {
-	(void)ptr;
-}
+	static t_smalloc* m;
 
-void			*malloc(size_t size)
-{
-	(void)size;
-	return (NULL);
-}
-
-void			*realloc(void *ptr, size_t size)
-{
-	(void)ptr;
-	(void)size;
-	return (NULL);
+	if (m == NULL)
+	{
+		
+	}
+	return (m);
 }

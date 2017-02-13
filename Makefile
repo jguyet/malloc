@@ -41,7 +41,9 @@ OBJDIR		=	.objs/
 INCDIR		=	includes/
 
 SRCBASE		=	\
-				kernel/main.c 
+				main.c												\
+				lib/ft_print.c										\
+				ft_mmap.c
 
 SRCS		=	$(addprefix $(SRCDIR), $(SRCBASE))
 
