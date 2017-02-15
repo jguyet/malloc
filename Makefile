@@ -43,7 +43,8 @@ INCDIR		=	includes/
 SRCBASE		=	\
 				main.c												\
 				lib/ft_print.c										\
-				ft_mmap.c
+				ft_mmap.c											\
+				memory_finder.c
 
 SRCS		=	$(addprefix $(SRCDIR), $(SRCBASE))
 

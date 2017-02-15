@@ -6,11 +6,11 @@
 /*   By: jguyet <jguyet@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/08/20 17:07:37 by jguyet            #+#    #+#             */
-/*   Updated: 2016/08/20 17:09:50 by jguyet           ###   ########.fr       */
+/*   Updated: 2017/02/15 19:41:55 by jguyet           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <mallocstandard.h>
+#include "mallocstandard.h"
 
 /*
 ** <b>void			free(void *ptr)</b><br>
@@ -23,13 +23,40 @@ void	free(void *ptr)
 
 /*
 ** <b>void			*malloc(size_t size)</b><br>
-** Alloue une zone memoir de la taille size et
+** Alloue une zone memoire de la taille size et
 ** retourne le pointer de debut.
 */
 void	*malloc(size_t size)
 {
-	(void)size;
-	return (NULL);
+	if (size < 1)
+		return (NULL);
+	printf("TINIY : %d, SMALL : %d", TINY, SMALL);
+	size_t length = size + sizeof(struct s_sheald); 
+	t_sheald left;
+	t_sheald *s;
+
+	s = check_zones(size, &left);
+
+	if (!s)
+	{
+		t_sheald *news = malloc_small();
+
+		if (news == NULL)
+			return (NULL);
+		news->next = NULL;
+		news->left = &left;
+		news->size = length - sizeof(struct s_sheald);
+		news->data = news + 1;
+		news->free = 0;
+		s = news;
+	}
+	else if (length + sizeof(struct s_sheald) < s->size)
+	{
+		place_sheald_to_end(s, length);
+	}
+	s->free = 0;
+	//recherche de zones possible et ajout de notre debut de chunk et fin.
+	return (s->data);
 }
 
 /*
@@ -55,5 +82,5 @@ void	show_alloc_mem()
 
 void	*test_malloc(size_t size)
 {
-	return (ft_mmap(0, size, PROT_READ | PROT_WRITE, 0));
+	return (malloc(size));
 }

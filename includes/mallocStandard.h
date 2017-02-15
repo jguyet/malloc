@@ -13,19 +13,23 @@
 #ifndef MALLOC_STANDARD_H
 # define MALLOC_STANDARD_H
 # include <stdlib.h>
+# include <unistd.h>
 # include <sys/mman.h>
 # include <pthread.h>
 # include <sys/time.h>
 # include <sys/resource.h>
 
-typedef enum			e_prot
-{
-	EXEC = PROT_EXEC,
-	READ = PROT_READ,
-	WRITE = PROT_WRITE,
-	NONE = PROT_NONE,
-	PROT_LENGTH = 5
-}						t_prot;
+# include "mallocstructs.h"
+
+# include <stdio.h>
+
+# define TRUE 1
+# define FALSE 0
+
+# define TINY 1000
+# define SMALL 10000
+
+# define ZONE_SIZE 100
 
 void					free(void *ptr);
 void					*malloc(size_t size);
@@ -35,11 +39,17 @@ void					*realloc(void *ptr, size_t size);
 ** Functions
 */
 void					*ft_mmap(void *addr, size_t length, int prot, int flags);
+t_sheald				*check_zones(size_t size, t_sheald *left);
+void					place_sheald_to_end(t_sheald *s, size_t size);
+
+t_sheald				*malloc_small();
+t_sheald				*malloc_large(size_t size);
 
 /*
 ** Library :
 */
 void					ft_print(char *str);
+
 
 void	*test_malloc(size_t size);
 
