@@ -44,7 +44,9 @@ SRCBASE		=	\
 				main.c												\
 				lib/ft_print.c										\
 				ft_mmap.c											\
-				memory_finder.c
+				memory_finder.c										\
+				zones_type.c										\
+				maps.c
 
 SRCS		=	$(addprefix $(SRCDIR), $(SRCBASE))
 

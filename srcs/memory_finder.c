@@ -12,62 +12,47 @@
 
 #include "mallocstandard.h"
 
-t_sheald				*malloc_map(size_t size_map)
+t_shield				*get_shield(size_t size)
 {
-	t_sheald	*s;
+	t_shield	*potential_shield;
+	t_map		*map;
+	t_zone		zone;
 
-	s = NULL;
-	if (s == NULL)
+	potential_shield = NULL;
+	map = NULL;
+	zone = get_zone_type_by_size(size);
+	if (!haszone(zone))
 	{
-		s = (t_sheald*)ft_mmap(0, size_map, PROT_READ | PROT_WRITE, 0);
-		
-		if (s == (void*)-1)
+		if (!(map = newmap(getallmaps(), zone, size)))
+		{
+			printf("map == NULL\n");
 			return (NULL);
-		s->size = 0;
-		s->data = NULL;
-		s->next = NULL;
-		s->left = NULL;
-		s->free = FALSE;
+		}
+		potential_shield = map->data;
+		potential_shield->size = size;
 	}
-	return (s);
+	else
+		map = getmap_by_zone(zone);
+	if (potential_shield == NULL && zone < ZONE_LARGE)
+	{
+		potential_shield = check_zone(size, map->data, zone);
+		printf("HAHAHAHHAHA\n");
+	}
+	//else
+		/////generation d'une mmap unique pour le shield (UNIQUEMENT LARGE ZONES)
+	if (potential_shield == NULL)//cree une nouvelle map
+	{
+		printf("potential_shield == NULL\n");
+		return (NULL);
+	}
+	printf("in zone : %d, size : %zu, ptr : %p\n", (zone == ZONE_TINY ? TINY : SMALL), potential_shield->size, potential_shield->ptr);
+	return (potential_shield);
 }
 
 /*
-** Aloue une map de la taille tiny
-** et renvoi le pointer de depart sois t_sheald start.
+** check zone sizes with size_t size and return ZONE_TYPE
+** equivalente
 */
-t_sheald				*malloc_tiny()
-{
-	t_sheald	*s;
-
-	s = malloc_map(TINY);
-	return (s);
-}
-
-/*
-** Aloue une map de la taille small
-** et renvoi le pointer de depart sois t_sheald start.
-*/
-t_sheald				*malloc_small()
-{
-	t_sheald	*s;
-
-	s = malloc_map(SMALL);
-	return (s);
-}
-
-/*
-** Aloue une map de la taille size avec les deux sheald
-** et renvoi le pointer de depart sois t_sheald start.
-*/
-t_sheald				*malloc_large(size_t size)
-{
-	t_sheald	*s;
-
-	s = malloc_map((SHEALD_SIZEOF * 2) + size);
-	return (s);
-}
-
 t_zone					get_zone_type_by_size(size_t size)
 {
 	size_t	page_size;
@@ -76,48 +61,56 @@ t_zone					get_zone_type_by_size(size_t size)
 
 	if (page_size < size)
 		return (ZONE_LARGE);
-	if ((size + SHEALD_SIZEOF) < (TINY / ZONE_SIZE))
+	if ((size + sizeof(struct s_shield)) < (TINY / ZONE_MAX_SIZE))
 		return (ZONE_TINY);
-	if ((size + SHEALD_SIZEOF) < (SMALL / ZONE_SIZE))
+	if ((size + sizeof(struct s_shield)) < (SMALL / ZONE_MAX_SIZE))
 		return (ZONE_SMALL);
 	return (ZONE_LARGE);
 }
 
-t_sheald				*switch_malloc(size_t size, t_zone zone)
+t_shield				*check_zone(size_t size, t_shield *s, t_zone zone)
 {
-	if (zone == ZONE_TINY)
-		return (malloc_tiny());
-	if (zone == ZONE_SMALL)
-		return (malloc_small());
-	return (malloc_large(size));
-}
+	t_shield	*check;
+	int			alloc;
+	size_t		octet;
 
-t_sheald				*check_zones(size_t size, t_sheald *left)
-{
-	t_sheald	*s;
-	t_zone		zone;
-
-	zone = get_zone_type_by_size(size);
-	s = switch_malloc(size, zone);
+	check = s;
+	alloc = 0;
+	octet = 0;
 	//cherche une bonne zone deja free
-	while (s && (s->free == FALSE || s->size < size))
+	while (check && (check->free == FALSE || check->size < size))
 	{
-		left = s;
-		s = s->next;
+		alloc++;
+		octet += check->size;
+		check = check->next;
+		if (s->next)
+			s = s->next;
 	}
-	return (s);
+	if (check == NULL)
+		printf("check == null\n");
+	if (check == NULL && alloc < ZONE_MAX_SIZE && s\
+		&& (octet + size) < (zone == ZONE_TINY ? TINY : SMALL))
+		check = add_clean_shield(((char*)s + sizeof(struct s_shield) + s->size));
+	else if (check == NULL)
+		return (NULL);
+	printf("check != null\n");
+	check->size = size;
+	check->left = s;
+	s->next = check;
+	printf("check_zone zone : %d, size : %zu, alloc : %d, octet_used : %zu\n", (zone == ZONE_TINY ? TINY : SMALL), check->size, alloc, octet);
+	return (check);
 }
 
-void					place_sheald_to_end(t_sheald *s, size_t size)
+void					place_shield_to_end(t_shield *s, size_t size)
 {
-	t_sheald	*news;
+	t_shield	*news;
 
-	news = (t_sheald*)((char*)s + size);
-	news->size = size - SHEALD_SIZEOF;
+	news = (t_shield*)((char*)s + size);
+	news->size = size - sizeof(struct s_shield);
 	news->free = FALSE;
 	news->left = s;
 	news->next = NULL;
-	news->data = news + 1;
+	news->ptr = news + 1;
 	if (news->left != NULL)
 		news->left->next = news;
 	if (news->next != NULL)

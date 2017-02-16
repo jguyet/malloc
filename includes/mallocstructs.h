@@ -10,8 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef MALLOC_STRUCTS_H
-# define MALLOC_STRUCTS_H
+#ifndef MALLOCSTRUCTS_H
+# define MALLOCSTRUCTS_H
 
 /*
 ** types de zones existantes
@@ -28,27 +28,25 @@ typedef enum			e_zone
 ** listes des boucliers de zones reserver
 ** dans les maps
 */
-typedef struct			s_sheald
+typedef struct			s_shield
 {
 	size_t				size;
-	void				*data;
-	struct s_sheald		*next;
-	struct s_sheald		*left;
+	void				*ptr;
+	struct s_shield		*next;
+	struct s_shield		*left;
 	int					free;
-}						t_sheald;
+}						t_shield;
 
 /*
 ** listes des maps TINY, SMALL, LARGE
 */
 typedef struct			s_map
 {
-	struct s_sheald		*data;
+	struct s_shield		*data;
 	struct s_map		*next;
 	struct s_map		*left;
 	enum e_zone			zone;
+	int					first;
 }						t_map;
-
-# define SHEALD_SIZEOF sizeof(struct s_sheald)
-# define MAP_SIZEOF sizeof(struct s_map)
 
 #endif

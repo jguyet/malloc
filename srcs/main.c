@@ -26,14 +26,12 @@ void	free(void *ptr)
 ** Alloue une zone memoire de la taille size et
 ** retourne le pointer de debut.
 */
-void	*malloc(size_t size)
+/*void	*malloc(size_t size)
 {
 	if (size < 1)
 		return (NULL);
-	printf("TINIY : %d, SMALL : %d", TINY, SMALL);
-	size_t length = size + sizeof(struct s_sheald); 
-	t_sheald left;
-	t_sheald *s;
+	t_sheald	left;
+	t_sheald	*s;
 
 	s = check_zones(size, &left);
 
@@ -45,18 +43,31 @@ void	*malloc(size_t size)
 			return (NULL);
 		news->next = NULL;
 		news->left = &left;
-		news->size = length - sizeof(struct s_sheald);
+		news->size = (size + sizeof(struct s_sheald)) - sizeof(struct s_sheald);
 		news->data = news + 1;
 		news->free = 0;
 		s = news;
 	}
-	else if (length + sizeof(struct s_sheald) < s->size)
+	else if ((size + (sizeof(struct s_sheald) * 2)) < s->size)
 	{
 		place_sheald_to_end(s, length);
 	}
 	s->free = 0;
 	//recherche de zones possible et ajout de notre debut de chunk et fin.
 	return (s->data);
+}*/
+
+
+void	*malloc(size_t size)
+{
+	if (size < 1)
+		return (NULL);
+	t_shield	*result;
+
+	if (!(result = get_shield(size)))
+		return (NULL);
+	result->free = FALSE;
+	return (result->ptr);
 }
 
 /*
