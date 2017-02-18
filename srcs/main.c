@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#define MALLOC_PROG
 #include "mallocstandard.h"
 
 /*
@@ -18,7 +19,21 @@
 */
 void	free(void *ptr)
 {
-	(void)ptr;
+	t_shield *s;
+
+	if (ptr == NULL)
+		return ;
+	//printf("FREE\n");
+	//printf("s->ptr = %p, potential->ptr = %p\n", ptr, ptr - sizeof(struct s_shield));
+	s = (t_shield*)((char*)ptr - sizeof(struct s_shield));
+	if (s == NULL)
+	{
+		//printf("FREE ->s == NULL\n");
+		return ;
+	}
+	//printf("FREE s->size : %zu, addr : %p\n", s->size, s->ptr);
+	s->free = TRUE;
+	find_and_free_map();
 }
 
 /*
@@ -26,38 +41,6 @@ void	free(void *ptr)
 ** Alloue une zone memoire de la taille size et
 ** retourne le pointer de debut.
 */
-/*void	*malloc(size_t size)
-{
-	if (size < 1)
-		return (NULL);
-	t_sheald	left;
-	t_sheald	*s;
-
-	s = check_zones(size, &left);
-
-	if (!s)
-	{
-		t_sheald *news = malloc_small();
-
-		if (news == NULL)
-			return (NULL);
-		news->next = NULL;
-		news->left = &left;
-		news->size = (size + sizeof(struct s_sheald)) - sizeof(struct s_sheald);
-		news->data = news + 1;
-		news->free = 0;
-		s = news;
-	}
-	else if ((size + (sizeof(struct s_sheald) * 2)) < s->size)
-	{
-		place_sheald_to_end(s, length);
-	}
-	s->free = 0;
-	//recherche de zones possible et ajout de notre debut de chunk et fin.
-	return (s->data);
-}*/
-
-
 void	*malloc(size_t size)
 {
 	if (size < 1)
@@ -82,13 +65,52 @@ void	*realloc(void *ptr, size_t size)
 	return (NULL);
 }
 
+void	print_zone(char *zone, t_map *map)
+{
+	t_shield *s;
+
+	s = map->data;
+	printf("%s : %p\n", zone, map);
+	while (s)
+	{
+		if (s->free == FALSE)
+			printf("[V] %p - %p : %zu octets\n", s->ptr, s->ptr + s->size, s->size);
+		else
+			printf("[X] %p - %p : %zu octets\n", s->ptr, s->ptr + s->size, s->size);
+		s = s->next;
+	}
+}
 /*
 ** <b>void			show_alloc_mem(void)</b><br>
 ** Affiche les zones disponibles TINY, SMALL, LARGE
 */
-void	show_alloc_mem()
+void	show_alloc_mem(void)
 {
-	ft_print("rien");
+	t_map	*map;
+	t_map	*next;
+
+	map = getallmaps();
+	next = map;
+	while (next)
+	{
+		if (next->first == FALSE && next->zone == ZONE_TINY)
+			print_zone("TINY", next);
+		next = next->next;
+	}
+	next = map;
+	while (next)
+	{
+		if (next->first == FALSE && next->zone == ZONE_SMALL)
+			print_zone("SMALL", next);
+		next = next->next;
+	}
+	next = map;
+	while (next)
+	{
+		if (next->first == FALSE && next->zone == ZONE_LARGE)
+			print_zone("LARGE", next);
+		next = next->next;
+	}
 }
 
 void	*test_malloc(size_t size)

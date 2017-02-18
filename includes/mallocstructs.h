@@ -34,7 +34,7 @@ typedef struct			s_shield
 	void				*ptr;
 	struct s_shield		*next;
 	struct s_shield		*left;
-	int					free;
+	short				free;
 }						t_shield;
 
 /*
@@ -47,6 +47,7 @@ typedef struct			s_map
 	struct s_map		*left;
 	enum e_zone			zone;
 	int					first;
+	void				*ptr;
 }						t_map;
 
 #endif

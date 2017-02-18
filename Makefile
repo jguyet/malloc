@@ -64,6 +64,7 @@ $(NAME):	$(OBJDIR) $(OBJS)
 	ar rc $(NAME) $(OBJS)
 	ranlib $(NAME)
 	ln -s $(NAME) $(NAMELINK)
+	cp $(NAME) libftmalloc.a
 	echo "MAKE   [$(NAMEBASE)]"
 
 $(OBJDIR):
@@ -93,8 +94,13 @@ fclean:		clean
 		printf "\r";														\
 	fi
 	rm -rf $(NAMELINK)
+	rm -rf test
 
-re:			fclean all
+test:
+	gcc -o test test.c -I ./includes -L . -lftmalloc
+	echo "Test generated\n"
+
+re:			fclean all test
 
 .PHONY:		fclean clean re
 

@@ -10,42 +10,85 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#define MALLOC_PROG
 #include "mallocstandard.h"
+
+t_shield				*get_shield_new_map(t_zone zone, size_t size)
+{
+	t_map		*map;
+
+	map = NULL;
+	if (!(map = add_new_map(zone, size)))
+	{
+		//printf("map == NULL\n");
+		return (NULL);
+	}
+	return (map->data);
+}
+
+t_shield				*check_free_place(t_zone zone, size_t size)
+{
+	t_map		*map;
+	t_shield	*s;
+	t_shield	*result;
+
+	map = getallmaps();
+	while (map)
+	{
+
+		if (!map->first && map->zone == zone\
+			&& get_free_size(map) >= size + sizeof(t_shield))
+		{
+			s = get_free_shield(map, size);
+			if (s != NULL)
+			{
+	//			printf("return free place\n");//voir si ajout de place libre
+				return (s);
+			}
+			s = map->data;
+			while (s->next)
+				s = s->next;
+	//		printf("add sheald %p on map freesize : %zu\n", s + sizeof(t_shield) + s->size, get_free_size(map));
+			result = add_clean_shield(s->ptr + s->size + 1);
+			result->left = s;
+			s->next = result;
+			return (result);
+		}
+		map = map->next;
+	}
+	//printf("create new map\n");
+	return (get_shield_new_map(zone, size));
+}
 
 t_shield				*get_shield(size_t size)
 {
 	t_shield	*potential_shield;
-	t_map		*map;
 	t_zone		zone;
 
 	potential_shield = NULL;
-	map = NULL;
 	zone = get_zone_type_by_size(size);
 	if (!haszone(zone))
 	{
-		if (!(map = newmap(getallmaps(), zone, size)))
-		{
-			printf("map == NULL\n");
-			return (NULL);
-		}
-		potential_shield = map->data;
-		potential_shield->size = size;
+	//	printf("create new map\n");
+		potential_shield = get_shield_new_map(zone, size);
 	}
 	else
-		map = getmap_by_zone(zone);
-	if (potential_shield == NULL && zone < ZONE_LARGE)
 	{
-		potential_shield = check_zone(size, map->data, zone);
-		printf("HAHAHAHHAHA\n");
+	//	printf("check free places\n");
+		//bouclage sur les maps
+		//si ont tombe sur la meme map que zone
+		//ont regarde s'il y a des places free.
+		potential_shield = check_free_place(ZONE_LARGE, size);//replace ZONE_LARGE pars zone
+	}
+	if (potential_shield != NULL)
+	{
+		potential_shield->size = size;
 	}
 	//else
 		/////generation d'une mmap unique pour le shield (UNIQUEMENT LARGE ZONES)
-	if (potential_shield == NULL)//cree une nouvelle map
-	{
-		printf("potential_shield == NULL\n");
+	if (potential_shield == NULL)
 		return (NULL);
-	}
-	printf("in zone : %d, size : %zu, ptr : %p\n", (zone == ZONE_TINY ? TINY : SMALL), potential_shield->size, potential_shield->ptr);
+	//printf("return shield s->size : %zu, s->ptr : %p, ptrshield = %p\n", potential_shield->size, potential_shield->ptr, potential_shield);
 	return (potential_shield);
 }
 
@@ -55,64 +98,41 @@ t_shield				*get_shield(size_t size)
 */
 t_zone					get_zone_type_by_size(size_t size)
 {
-	size_t	page_size;
-
-	page_size = getpagesize();
-
-	if (page_size < size)
-		return (ZONE_LARGE);
-	if ((size + sizeof(struct s_shield)) < (TINY / ZONE_MAX_SIZE))
+	if (size <= (size_t)(TINY / ZONE_MAX_SIZE))
 		return (ZONE_TINY);
-	if ((size + sizeof(struct s_shield)) < (SMALL / ZONE_MAX_SIZE))
+	if (size <= (size_t)(SMALL / ZONE_MAX_SIZE))
 		return (ZONE_SMALL);
 	return (ZONE_LARGE);
 }
 
-t_shield				*check_zone(size_t size, t_shield *s, t_zone zone)
+void					find_and_free_map(void)
 {
-	t_shield	*check;
-	int			alloc;
-	size_t		octet;
+	t_map	*map;
+	int		size;
+	t_map	*tmp;
 
-	check = s;
-	alloc = 0;
-	octet = 0;
-	//cherche une bonne zone deja free
-	while (check && (check->free == FALSE || check->size < size))
+	map = getallmaps();
+	while (map)
 	{
-		alloc++;
-		octet += check->size;
-		check = check->next;
-		if (s->next)
-			s = s->next;
+		if (map->first == FALSE && get_used_size(map) == 0)
+		{
+			if (map->left)
+				map->left->next = (map->next ? map->next : NULL);
+			if (map->next)
+				map->next->left = (map->left ? map->left : NULL);
+			if (map->zone >= ZONE_LARGE)
+				size = map->data->size;
+			else
+				size = (map->zone == ZONE_TINY ? TINY : SMALL);
+			tmp = map->next;
+			show_alloc_mem();
+			munmap(map->ptr, sizeof(t_map) + size);
+			//printf("LA4 %p\n", map);
+			//printf("return (%d) munmap;\n", munmap(map->ptr, sizeof(t_map) + size));
+			//printf("LA5 %p\n", map);
+			map = tmp;
+			continue ;
+		}
+		map = map->next;
 	}
-	if (check == NULL)
-		printf("check == null\n");
-	if (check == NULL && alloc < ZONE_MAX_SIZE && s\
-		&& (octet + size) < (zone == ZONE_TINY ? TINY : SMALL))
-		check = add_clean_shield(((char*)s + sizeof(struct s_shield) + s->size));
-	else if (check == NULL)
-		return (NULL);
-	printf("check != null\n");
-	check->size = size;
-	check->left = s;
-	s->next = check;
-	printf("check_zone zone : %d, size : %zu, alloc : %d, octet_used : %zu\n", (zone == ZONE_TINY ? TINY : SMALL), check->size, alloc, octet);
-	return (check);
-}
-
-void					place_shield_to_end(t_shield *s, size_t size)
-{
-	t_shield	*news;
-
-	news = (t_shield*)((char*)s + size);
-	news->size = size - sizeof(struct s_shield);
-	news->free = FALSE;
-	news->left = s;
-	news->next = NULL;
-	news->ptr = news + 1;
-	if (news->left != NULL)
-		news->left->next = news;
-	if (news->next != NULL)
-		news->next->left = news;
 }

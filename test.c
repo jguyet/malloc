@@ -1,19 +1,41 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_mmap.c                                          :+:      :+:    :+:   */
+/*   test.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jguyet <jguyet@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/02/13 17:31:35 by jguyet            #+#    #+#             */
-/*   Updated: 2017/02/13 17:31:40 by jguyet           ###   ########.fr       */
+/*   Created: 2017/02/13 17:48:29 by jguyet            #+#    #+#             */
+/*   Updated: 2017/02/13 17:49:24 by jguyet           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#define MALLOC_PROG
-#include "mallocstandard.h"
+//#include <mallocstandard.h>
+#include <stdio.h>
+#include <stdlib.h>
 
-void	*ft_mmap(void *addr, size_t length, int prot, int flags)
+void	test()
 {
-	return (mmap(addr, length, prot, flags | MAP_ANONYMOUS | MAP_PRIVATE, -1, 0));
+	char* test;
+
+	test = NULL;
+	if ((test = (char*)malloc(9 * sizeof(char))) == NULL)
+	{
+		printf("lol");
+		return ;
+	}
+	free(test);
+}
+
+int		main(int argc, char **argv)
+{
+	char* test = malloc(10);
+
+	free(test);
+
+	if (test)
+		printf("non null");
+	else
+		printf("null");
+	return (0);
 }
