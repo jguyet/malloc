@@ -46,7 +46,8 @@ SRCBASE		=	\
 				ft_mmap.c											\
 				memory_finder.c										\
 				zones_type.c										\
-				maps.c
+				maps.c												\
+				free.c
 
 SRCS		=	$(addprefix $(SRCDIR), $(SRCBASE))
 

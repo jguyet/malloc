@@ -19,21 +19,9 @@
 */
 void	free(void *ptr)
 {
-	t_shield *s;
-
 	if (ptr == NULL)
 		return ;
-	//printf("FREE\n");
-	//printf("s->ptr = %p, potential->ptr = %p\n", ptr, ptr - sizeof(struct s_shield));
-	s = (t_shield*)((char*)ptr - sizeof(struct s_shield));
-	if (s == NULL)
-	{
-		//printf("FREE ->s == NULL\n");
-		return ;
-	}
-	//printf("FREE s->size : %zu, addr : %p\n", s->size, s->ptr);
-	s->free = TRUE;
-	find_and_free_map();
+	free_ptr(ptr);
 }
 
 /*
@@ -74,10 +62,10 @@ void	print_zone(char *zone, t_map *map)
 	while (s)
 	{
 		if (s->free == FALSE)
-			printf("[V] %p - %p : %zu octets\n", s->ptr, s->ptr + s->size, s->size);
+			printf("[U] %p - %p : %zu octets\n", s->ptr, s->ptr + s->size, s->size);
 		else
-			printf("[X] %p - %p : %zu octets\n", s->ptr, s->ptr + s->size, s->size);
-		s = s->next;
+			printf("[F] %p - %p : %zu octets\n", s->ptr, s->ptr + s->size, s->size);
+		s = get_shield_id(map, s->id + 1);
 	}
 }
 /*

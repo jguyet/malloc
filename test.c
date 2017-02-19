@@ -10,9 +10,9 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-//#include <mallocstandard.h>
+#include <mallocstandard.h>
 #include <stdio.h>
-#include <stdlib.h>
+//#include <stdlib.h>
 
 void	test()
 {
@@ -28,14 +28,12 @@ void	test()
 }
 
 int		main(int argc, char **argv)
-{
-	char* test = malloc(10);
-
-	free(test);
-
-	if (test)
-		printf("non null");
-	else
-		printf("null");
-	return (0);
+{ 
+	int i = 0;
+	while (i < 103)
+	{
+    	char *str2 = malloc(100000);
+    	i++;
+	}
+    return (0);
 }

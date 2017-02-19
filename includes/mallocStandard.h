@@ -57,6 +57,17 @@ size_t					get_free_size(t_map *map);
 void					find_and_free_map(void);
 t_map					**getfirstmap(void);
 
+t_shield	*get_shield_id(t_map *map, int id);
+t_shield	*get_shield_next(t_shield *s);
+void		*get_shield_by_id(void *ptr, int id);
+void		*get_shield_by_zone_and_id(void *ptr, t_zone zone, int id);
+void		create_shields(void *ptr, t_zone zone, size_t ssize);
+void		add_shield(void *ptr, int id, int size);
+void		*get_ptr_id(t_map *map, int id);
+size_t get_free_number_places(t_map *map);
+void	reatribute_size(t_map *map);
+void		free_ptr(void *ptr);
+
 /*
 ** Alocations de zones fraiche
 */

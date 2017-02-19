@@ -20,9 +20,13 @@ t_shield				*get_shield_new_map(t_zone zone, size_t size)
 	map = NULL;
 	if (!(map = add_new_map(zone, size)))
 	{
-		//printf("map == NULL\n");
+		printf("map == NULL\n");
 		return (NULL);
 	}
+	map->data->ptr = get_ptr_id(map, 0);
+	map->data->size = size;
+	map->size_place = zone == ZONE_LARGE ? 0 : (map->zone == ZONE_TINY ? TINY : SMALL);
+	map->size_place -= zone == ZONE_LARGE ? 0 : (map->zone == ZONE_TINY ? 1024 : 4096);
 	return (map->data);
 }
 
@@ -30,33 +34,25 @@ t_shield				*check_free_place(t_zone zone, size_t size)
 {
 	t_map		*map;
 	t_shield	*s;
-	t_shield	*result;
 
 	map = getallmaps();
 	while (map)
 	{
 
-		if (!map->first && map->zone == zone\
-			&& get_free_size(map) >= size + sizeof(t_shield))
+		if (map->first == FALSE && map->zone == zone\
+			&& map->size_place >= size)
 		{
 			s = get_free_shield(map, size);
 			if (s != NULL)
 			{
-	//			printf("return free place\n");//voir si ajout de place libre
+				if (s->ptr == NULL)
+					s->ptr = get_ptr_id(map, s->id);
+				map->size_place -= map->zone == ZONE_LARGE ? 0 : (map->zone == ZONE_TINY ? 1024 : 4096);
 				return (s);
 			}
-			s = map->data;
-			while (s->next)
-				s = s->next;
-	//		printf("add sheald %p on map freesize : %zu\n", s + sizeof(t_shield) + s->size, get_free_size(map));
-			result = add_clean_shield(s->ptr + s->size + 1);
-			result->left = s;
-			s->next = result;
-			return (result);
 		}
 		map = map->next;
 	}
-	//printf("create new map\n");
 	return (get_shield_new_map(zone, size));
 }
 
@@ -69,16 +65,11 @@ t_shield				*get_shield(size_t size)
 	zone = get_zone_type_by_size(size);
 	if (!haszone(zone))
 	{
-	//	printf("create new map\n");
 		potential_shield = get_shield_new_map(zone, size);
 	}
 	else
 	{
-	//	printf("check free places\n");
-		//bouclage sur les maps
-		//si ont tombe sur la meme map que zone
-		//ont regarde s'il y a des places free.
-		potential_shield = check_free_place(ZONE_LARGE, size);//replace ZONE_LARGE pars zone
+		potential_shield = check_free_place(zone, size);
 	}
 	if (potential_shield != NULL)
 	{
@@ -88,7 +79,6 @@ t_shield				*get_shield(size_t size)
 		/////generation d'une mmap unique pour le shield (UNIQUEMENT LARGE ZONES)
 	if (potential_shield == NULL)
 		return (NULL);
-	//printf("return shield s->size : %zu, s->ptr : %p, ptrshield = %p\n", potential_shield->size, potential_shield->ptr, potential_shield);
 	return (potential_shield);
 }
 
@@ -121,9 +111,9 @@ void					find_and_free_map(void)
 			if (map->next)
 				map->next->left = (map->left ? map->left : NULL);
 			if (map->zone >= ZONE_LARGE)
-				size = map->data->size;
+				size = sizeof(t_shield) + map->data->size;
 			else
-				size = (map->zone == ZONE_TINY ? TINY : SMALL);
+				size = (sizeof(t_shield) * ZONE_MAX_SIZE) + (map->zone == ZONE_TINY ? TINY : SMALL);
 			tmp = map->next;
 			show_alloc_mem();
 			munmap(map->ptr, sizeof(t_map) + size);
