@@ -1,20 +1,24 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_mmap.c                                          :+:      :+:    :+:   */
+/*   test5.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jguyet <jguyet@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/02/13 17:31:35 by jguyet            #+#    #+#             */
-/*   Updated: 2017/02/13 17:31:40 by jguyet           ###   ########.fr       */
+/*   Created: 2017/02/20 14:26:44 by jguyet            #+#    #+#             */
+/*   Updated: 2017/02/20 14:26:45 by jguyet           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#define MALLOC_PROG
-#include "mallocstandard.h"
+#include <stdlib.h>
 
-void	*ft_mmap(void *addr, size_t length, int prot, int flags)
+int		main(void)
 {
-	return (mmap(addr, length, prot, flags | \
-		MAP_ANONYMOUS | MAP_PRIVATE, -1, 0));
+	malloc(1024);
+	malloc(1024 * 32);
+	malloc(1024 * 1024);
+	malloc(1024 * 1024 * 16);
+	malloc(1024 * 1024 * 128);
+	show_alloc_mem();
+	return (0);
 }

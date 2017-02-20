@@ -32,8 +32,9 @@ int		main(int argc, char **argv)
 	int i = 0;
 	while (i < 103)
 	{
-    	char *str2 = malloc(100000);
+    	char *str2 = malloc(1);
     	i++;
 	}
+	show_alloc_mem();
     return (0);
 }
