@@ -19,9 +19,12 @@ void	*malloc(size_t size)
 
 	if (size < 1)
 		return (NULL);
+	getallmaps();
+	pthread_mutex_lock(&g_lock);
 	if (!(result = get_shield(size)))
 		return (NULL);
 	result->free = FALSE;
+	pthread_mutex_unlock(&g_lock);
 	return (result->ptr);
 }
 
@@ -29,14 +32,23 @@ void	free(void *ptr)
 {
 	if (ptr == NULL)
 		return ;
+	getallmaps();
+	pthread_mutex_lock(&g_lock);
 	free_ptr(ptr);
+	pthread_mutex_unlock(&g_lock);
 }
 
 void	*realloc(void *ptr, size_t size)
 {
+	void *nptr;
+
 	if (ptr == NULL)
 		return (NULL);
-	return (realloc_memory(ptr, size));
+	getallmaps();
+	pthread_mutex_lock(&g_lock);
+	nptr = realloc_memory(ptr, size);
+	pthread_mutex_unlock(&g_lock);
+	return (nptr);
 }
 
 void	show_alloc_mem(void)
@@ -50,4 +62,9 @@ void	show_alloc_mem(void)
 	ft_putstr("Total : ");
 	ft_putnbr(total_size);
 	ft_putstr(" octets\n");
+}
+
+void			show_hexa_mem(void)
+{
+	print_hexa_tiny();
 }

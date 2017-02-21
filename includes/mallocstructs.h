@@ -50,17 +50,4 @@ typedef struct			s_map
 	size_t				size_place;
 }						t_map;
 
-typedef struct			s_malloc
-{
-	struct s_shield		*data;
-	struct s_map		*next;
-	struct s_map		*left;
-	enum e_zone			zone;
-	int					first;
-	void				*ptr;
-	size_t				size_place;
-	short				older_alloc_size;
-	short				retry;
-}						t_malloc;
-
 #endif

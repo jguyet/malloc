@@ -51,11 +51,13 @@ SRCBASE		=	\
 				realloc.c											\
 				utils_two.c											\
 				print.c												\
+				print_zone.c										\
 				lib/ft_itoabase.c									\
 				lib/ft_putchar.c									\
 				lib/ft_putnbr.c										\
 				lib/ft_strlen.c										\
-				lib/ft_putstr.c
+				lib/ft_putstr.c										\
+				print_hexa_memory.c
 
 SRCS		=	$(addprefix $(SRCDIR), $(SRCBASE))
 
@@ -73,7 +75,6 @@ $(NAME):	$(OBJDIR) $(OBJS)
 	ar rc $(NAME) $(OBJS)
 	ranlib $(NAME)
 	ln -s $(NAME) $(NAMELINK)
-	cp $(NAME) libftmalloc.a
 	echo "MAKE   [$(NAMEBASE)]"
 
 $(OBJDIR):
@@ -106,6 +107,7 @@ fclean:		clean
 	rm -rf test
 
 test:
+	cp $(NAME) libftmalloc.a
 	gcc -o test0 tests/test0.c -I includes/ -L . -lftmalloc
 	gcc -o test1 tests/test1.c -I includes/ -L . -lftmalloc
 	gcc -o test2 tests/test2.c -I includes/ -L . -lftmalloc

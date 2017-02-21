@@ -15,15 +15,16 @@
 
 t_map		*getallmaps(void)
 {
-	static t_malloc	*m;
+	static t_map	*m;
 	void			*ptr;
 
 	if (m == NULL)
 	{
-		ptr = (void*)ft_mmap(0, sizeof(t_malloc), PROT_READ | PROT_WRITE, 0);
+		pthread_mutex_init(&g_lock, NULL);
+		ptr = (void*)ft_mmap(0, sizeof(t_map), PROT_READ | PROT_WRITE, 0);
 		if (ptr == (void*)-1)
 			return (NULL);
-		m = (t_malloc*)ptr;
+		m = (t_map*)ptr;
 		m->data = NULL;
 		m->next = NULL;
 		m->left = NULL;
@@ -31,10 +32,8 @@ t_map		*getallmaps(void)
 		m->first = TRUE;
 		m->ptr = ptr;
 		m->size_place = 0;
-		m->older_alloc_size = 0;
-		m->retry = 0;
 	}
-	return ((t_map*)m);
+	return (m);
 }
 
 t_map		*newmap(t_map *map, t_zone zone, int large_size)

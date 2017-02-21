@@ -41,7 +41,7 @@ static t_shield		*get_shield_r(t_map *map, void *ptr, size_t size)
 			break ;
 		s = get_shield_id(map, s->id + 1);
 	}
-	if (s != NULL && size <= get_size_place(map))
+	if (s != NULL && size <= get_size_place(map->zone))
 	{
 		s->size = size;
 		return (s->ptr);
@@ -53,6 +53,7 @@ void				*realloc_memory(void *ptr, size_t size)
 {
 	t_map		*map;
 	t_shield	*s;
+	t_shield	*r;
 
 	map = getallmaps();
 	while (map)
@@ -66,10 +67,11 @@ void				*realloc_memory(void *ptr, size_t size)
 		s = get_shield_r(map, ptr, size);
 		if (s == NULL)
 			return (NULL);
-		if (!(ptr = malloc(size)))
+		if (!(r = get_shield(size)))
 			return (NULL);
-		ft_memcpy(ptr, s->ptr, s->size);
-		return (ptr);
+		ft_memcpy(r->ptr, s->ptr, s->size);
+		free_ptr(s->ptr);
+		return (r->ptr);
 	}
 	return (NULL);
 }

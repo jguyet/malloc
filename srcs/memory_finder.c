@@ -23,8 +23,8 @@ t_shield				*get_shield_new_map(t_zone zone, size_t size)
 	map->data->ptr = get_ptr_id(map, 0);
 	map->data->size = size;
 	map->size_place = zone == ZONE_LARGE ? 0 : \
-	get_size_place(map) * ZONE_MAX_SIZE;
-	map->size_place -= get_size_place(map);
+	get_size_place(map->zone) * ZONE_MAX_SIZE;
+	map->size_place -= get_size_place(map->zone);
 	return (map->data);
 }
 
@@ -44,7 +44,7 @@ t_shield				*check_free_place(t_zone zone, size_t size)
 			{
 				if (s->ptr == NULL)
 					s->ptr = get_ptr_id(map, s->id);
-				map->size_place -= get_size_place(map);
+				map->size_place -= get_size_place(map->zone);
 				return (s);
 			}
 		}

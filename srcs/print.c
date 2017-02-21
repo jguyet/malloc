@@ -36,8 +36,10 @@ void	print_pointer(void *ptr)
 
 void	print_shield(t_shield *s)
 {
-	if (s->free == FALSE)
+	if (DEBUG_MODE && s->free == FALSE)
 		ft_putstr("[U] ");
+	else if (s->free == FALSE)
+		ft_putstr("");
 	else if (DEBUG_MODE)
 		ft_putstr("[F] ");
 	else
@@ -72,67 +74,4 @@ size_t	print_zone(char *zone, t_map *map, BOOLEAN first)
 		s = get_shield_id(map, s->id + 1);
 	}
 	return (size);
-}
-
-size_t	print_tiny()
-{
-	t_map	*map;
-	size_t	total_size;
-	BOOLEAN	first;
-
-	map = getallmaps();
-	total_size = 0;
-	first = TRUE;
-	while (map)
-	{
-		if (map->first == FALSE && map->zone == ZONE_TINY)
-		{
-			total_size += print_zone("TINY", map, first);
-			first = FALSE;
-		}
-		map = map->next;
-	}
-	return (total_size);
-}
-
-size_t	print_small()
-{
-	t_map	*map;
-	size_t	total_size;
-	BOOLEAN	first;
-
-	map = getallmaps();
-	total_size = 0;
-	first = TRUE;
-	while (map)
-	{
-		if (map->first == FALSE && map->zone == ZONE_SMALL)
-		{
-			total_size += print_zone("SMALL", map, first);
-			first = FALSE;
-		}
-		map = map->next;
-	}
-	return (total_size);
-}
-
-size_t	print_large()
-{
-	t_map	*map;
-	size_t	total_size;
-	BOOLEAN	first;
-
-	map = getallmaps();
-	total_size = 0;
-	first = TRUE;
-	while (map)
-	{
-		if (map->first == FALSE && map->zone == ZONE_LARGE)
-		{
-			total_size += print_zone("LARGE", map, first);
-			first = FALSE;
-		}
-		map = map->next;
-	}
-	return (total_size);
 }

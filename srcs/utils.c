@@ -13,7 +13,7 @@
 #define MALLOC_PROG
 #include "mallocstandard.h"
 
-size_t		get_used_size(t_map *map)
+size_t			get_used_size(t_map *map)
 {
 	t_shield	*s;
 	size_t		size;
@@ -29,7 +29,7 @@ size_t		get_used_size(t_map *map)
 	return (size);
 }
 
-size_t		get_free_size(t_map *map)
+size_t			get_free_size(t_map *map)
 {
 	size_t	used;
 
@@ -41,7 +41,7 @@ size_t		get_free_size(t_map *map)
 	return (0);
 }
 
-size_t		get_free_number_places(t_map *map)
+size_t			get_free_number_places(t_map *map)
 {
 	t_shield	*s;
 	size_t		size;
@@ -57,7 +57,7 @@ size_t		get_free_number_places(t_map *map)
 	return (size);
 }
 
-t_shield	*get_free_shield(t_map *map, size_t size)
+t_shield		*get_free_shield(t_map *map, size_t size)
 {
 	t_shield	*s;
 
@@ -73,11 +73,11 @@ t_shield	*get_free_shield(t_map *map, size_t size)
 	return (NULL);
 }
 
-size_t		get_size_place(t_map *map)
+inline size_t	get_size_place(t_zone zone)
 {
-	if (map->zone == ZONE_TINY)
+	if (zone == ZONE_TINY)
 		return (TINY / ZONE_MAX_SIZE);
-	if (map->zone == ZONE_TINY)
+	if (zone == ZONE_TINY)
 		return (SMALL / ZONE_MAX_SIZE);
 	return (0);
 }
