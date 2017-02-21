@@ -106,8 +106,21 @@ void			ft_putnbr(long int n);
 int				ft_strlen(char *str);
 char			*ft_itoabase(long long int nbr, char *base);
 void			ft_putchar(char c);
-
-void			print_hexa_tiny(void);
+/*
+** Functions Print_hexa
+*/
+int				print_hexa_shield(t_shield *s);
+void			print_preshexa_shield(t_shield *s);
+void			print_hexa_map(t_map *map);
+void			print_hexa_zone(t_zone zone);
+void			print_ascii_sixten_shield(int size, void *ptr);
+void			print_itoa_val(int val);
+int				print_ended_hexa_line(size_t count, void *ptr);
+/*
+** Functions search
+*/
+t_shield		*search_ptr(void *ptr);
+t_shield		*search_ptr_shield(void *ptr, t_map *map);
 
 pthread_mutex_t	g_lock;
 
@@ -120,9 +133,9 @@ void			free(void *ptr);
 void			*malloc(size_t size);
 void			*realloc(void *ptr, size_t size);
 void			show_alloc_mem(void);
-void			show_hexa_mem(void);
 /*
 ** BONUS
 */
-void			print_hexa_tiny(void);
+void			show_hexa_mem(void);
+void			show_hexa_pointer(void *ptr);
 #endif

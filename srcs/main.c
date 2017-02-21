@@ -64,7 +64,24 @@ void	show_alloc_mem(void)
 	ft_putstr(" octets\n");
 }
 
-void			show_hexa_mem(void)
+void	show_hexa_mem(void)
 {
-	print_hexa_tiny();
+	if (get_count_zone(ZONE_TINY) > 0)
+	{
+		ft_putstr("<----------------------------HEXA-TINY");
+		ft_putstr("---------------------------->\n");
+		print_hexa_zone(ZONE_TINY);
+	}
+	if (get_count_zone(ZONE_SMALL) > 0)
+	{
+		ft_putstr("<----------------------------HEXA-SMALL");
+		ft_putstr("--------------------------->\n");
+		print_hexa_zone(ZONE_SMALL);
+	}
+	if (get_count_zone(ZONE_LARGE) > 0)
+	{
+		ft_putstr("<----------------------------HEXA-LARGE");
+		ft_putstr("--------------------------->\n");
+		print_hexa_zone(ZONE_LARGE);
+	}
 }

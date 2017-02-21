@@ -32,7 +32,7 @@ MAX_COLS	=	$$(echo "$$(tput cols)-20-$(LENGTHNAME)"|bc)
 
 CC			=	gcc
 
-FLAGS		=	-Wall -Wextra -Werror -O3 -ggdb
+FLAGS		=	-Wall -Wextra -Werror -O3
 
 SRCDIR		=	srcs/
 
@@ -49,6 +49,7 @@ SRCBASE		=	\
 				shield.c											\
 				utils.c												\
 				realloc.c											\
+				search.c											\
 				utils_two.c											\
 				print.c												\
 				print_zone.c										\
@@ -57,7 +58,8 @@ SRCBASE		=	\
 				lib/ft_putnbr.c										\
 				lib/ft_strlen.c										\
 				lib/ft_putstr.c										\
-				print_hexa_memory.c
+				print_hexa_memory.c									\
+				print_hexa_memory_suite.c
 
 SRCS		=	$(addprefix $(SRCDIR), $(SRCBASE))
 
