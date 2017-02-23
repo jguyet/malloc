@@ -70,7 +70,7 @@ void				*realloc_memory(void *ptr, size_t size)
 		if (!(r = get_shield(size)))
 			return (NULL);
 		ft_memcpy(r->ptr, s->ptr, s->size);
-		free_ptr(s->ptr);
+		free_ptr(s->ptr, FALSE);
 		return (r->ptr);
 	}
 	return (NULL);

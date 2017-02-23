@@ -34,7 +34,7 @@ void	free(void *ptr)
 		return ;
 	getallmaps();
 	pthread_mutex_lock(&g_lock);
-	free_ptr(ptr);
+	free_ptr(ptr, TRUE);
 	pthread_mutex_unlock(&g_lock);
 }
 
@@ -43,7 +43,7 @@ void	*realloc(void *ptr, size_t size)
 	void *nptr;
 
 	if (ptr == NULL)
-		return (NULL);
+		return (malloc(size));
 	getallmaps();
 	pthread_mutex_lock(&g_lock);
 	nptr = realloc_memory(ptr, size);

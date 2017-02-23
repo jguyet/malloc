@@ -50,6 +50,7 @@ BOOLEAN		free_shield(void *ptr, t_map *map)
 		if (s->free == FALSE && s->ptr == ptr)
 		{
 			s->free = TRUE;
+			map->size_place += get_size_place(map->zone);
 			return (TRUE);
 		}
 		s = get_shield_id(map, s->id + 1);
@@ -62,9 +63,9 @@ void		free_map(t_map *map)
 	size_t	size;
 
 	if (map->left)
-		map->left->next = (map->next ? map->next : NULL);
+		map->left->next = map->next ? map->next : NULL;
 	if (map->next)
-		map->next->left = (map->left ? map->left : NULL);
+		map->next->left = map->left ? map->left : NULL;
 	if (map->zone >= ZONE_LARGE)
 		size = sizeof(t_shield) + map->data->size;
 	else
@@ -73,16 +74,20 @@ void		free_map(t_map *map)
 	munmap(map->ptr, sizeof(t_map) + size);
 }
 
-void		free_ptr(void *ptr)
+void		free_ptr(void *ptr, BOOLEAN print)
 {
 	t_map *map;
 
 	map = getallmaps();
+	(void)print;
 	while (map)
 	{
 		if (map->first == FALSE && free_shield(ptr, map))
 		{
 			if (map->zone == ZONE_LARGE && get_used_size(map) == 0)
+				free_map(map);
+			else if (map->zone != ZONE_LARGE &&
+				get_count_zone(map->zone) > 1 && get_used_size(map) == 0)
 				free_map(map);
 			return ;
 		}

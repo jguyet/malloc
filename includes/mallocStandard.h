@@ -74,7 +74,7 @@ void			*get_start_ptr_zone(t_map *map);
 void			*get_end_ptr_zone(void *start_p, t_map *map);
 BOOLEAN			free_shield(void *ptr, t_map *map);
 void			free_map(t_map *map);
-void			free_ptr(void *ptr);
+void			free_ptr(void *ptr, BOOLEAN print);
 /*
 ** Functions memory_finder
 */

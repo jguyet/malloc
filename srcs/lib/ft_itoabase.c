@@ -13,7 +13,19 @@
 #define MALLOC_PROG
 #include "mallocstandard.h"
 
-char	*ft_itoabase(long long int nbr, char *base)
+static void	*itoa_malloc(size_t size)
+{
+	t_shield	*result;
+
+	if (size < 1)
+		return (NULL);
+	if (!(result = get_shield(size)))
+		return (NULL);
+	result->free = FALSE;
+	return (result->ptr);
+}
+
+char		*ft_itoabase(long long int nbr, char *base)
 {
 	char			*res;
 	int				size;
@@ -29,7 +41,7 @@ char	*ft_itoabase(long long int nbr, char *base)
 		size++;
 	}
 	tmp = nbr;
-	res = (char*)malloc(sizeof(char) * (size + 1));
+	res = (char*)itoa_malloc(sizeof(char) * (size + 1));
 	size = 0;
 	while (len)
 	{

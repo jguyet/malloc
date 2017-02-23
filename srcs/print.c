@@ -25,7 +25,7 @@ void	print_pointer(void *ptr)
 		if (tmp != NULL)
 		{
 			ft_putstr(tmp);
-			free(tmp);
+			free_ptr(tmp, FALSE);
 		}
 		else
 			ft_putstr("0");
@@ -59,6 +59,7 @@ size_t	print_zone(char *zone, t_map *map, BOOLEAN first)
 
 	size = 0;
 	s = map->data;
+	(void)first;
 	if (first == TRUE)
 	{
 		ft_putstr(zone);

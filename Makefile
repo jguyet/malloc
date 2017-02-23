@@ -32,7 +32,7 @@ MAX_COLS	=	$$(echo "$$(tput cols)-20-$(LENGTHNAME)"|bc)
 
 CC			=	gcc
 
-FLAGS		=	-Wall -Wextra -Werror -O3
+FLAGS		=	-fPIC -W -Wall -Wextra -Werror -g3
 
 SRCDIR		=	srcs/
 
@@ -74,9 +74,8 @@ all:
 		$(MAKE) -j $(NAME);													\
 	fi
 $(NAME):	$(OBJDIR) $(OBJS)
-	ar rc $(NAME) $(OBJS)
-	ranlib $(NAME)
-	ln -s $(NAME) $(NAMELINK)
+	$(CC) $(FLAGS) -shared -o $(NAME) $(OBJS) -I $(INCDIR)
+	ln -sf $(NAME) $(NAMELINK)
 	echo "MAKE   [$(NAMEBASE)]"
 
 $(OBJDIR):
@@ -110,13 +109,13 @@ fclean:		clean
 
 test:
 	cp $(NAME) libftmalloc.a
-	gcc -o test0 tests/test0.c -I includes/ -L . -lftmalloc
-	gcc -o test1 tests/test1.c -I includes/ -L . -lftmalloc
-	gcc -o test2 tests/test2.c -I includes/ -L . -lftmalloc
-	gcc -o test3 tests/test3.c -I includes/ -L . -lftmalloc
-	gcc -o test3bis tests/test3bis.c -I includes/ -L . -lftmalloc
-	gcc -o test4 tests/test4.c -I includes/ -L . -lftmalloc
-	gcc -o test5 tests/test5.c -I includes/ -L . -lftmalloc
+	gcc -o test0 tests/test0.c -I includes/ -L . -lft_malloc
+	gcc -o test1 tests/test1.c -I includes/ -L . -lft_malloc
+	gcc -o test2 tests/test2.c -I includes/ -L . -lft_malloc
+	gcc -o test3 tests/test3.c -I includes/ -L . -lft_malloc
+	gcc -o test3bis tests/test3bis.c -I includes/ -L . -lft_malloc
+	gcc -o test4 tests/test4.c -I includes/ -L . -lft_malloc
+	gcc -o test5 tests/test5.c -I includes/ -L . -lft_malloc
 	echo "Test generated\n"
 
 re:			fclean all
